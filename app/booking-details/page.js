@@ -1,15 +1,36 @@
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 
-export default function BookingDetails() {
+function BookingInfo() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const selectedDate = searchParams.get('date');
   const selectedTime = searchParams.get('time');
   const selectedMode = searchParams.get('mode');
   const price = "₹1500"; // This can be dynamic based on therapy mode
 
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">Booking Details</h2>
+          <div className="mt-2 text-gray-600">
+            <p>Date: {selectedDate}</p>
+            <p>Time: {selectedTime}</p>
+            <p>Mode: {selectedMode}</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-sm text-gray-600">Session Fee</p>
+          <p className="text-2xl font-bold text-[#46BEE3]">{price}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BookingDetails() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -57,23 +78,10 @@ export default function BookingDetails() {
       </button>
 
       <div className="max-w-3xl mx-auto">
-        {/* Booking Summary Card */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800">Booking Details</h2>
-              <div className="mt-2 text-gray-600">
-                <p>Date: {selectedDate}</p>
-                <p>Time: {selectedTime}</p>
-                <p>Mode: {selectedMode}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Session Fee</p>
-              <p className="text-2xl font-bold text-[#46BEE3]">{price}</p>
-            </div>
-          </div>
-        </div>
+        {/* Booking Summary Card wrapped in Suspense */}
+        <Suspense fallback={<div className="bg-white rounded-lg shadow-lg p-6 mb-8">Loading booking details...</div>}>
+          <BookingInfo />
+        </Suspense>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6">
